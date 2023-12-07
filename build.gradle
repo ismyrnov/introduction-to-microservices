@@ -1,0 +1,28 @@
+group = "com.epam.ismyrnov"
+
+subprojects {
+    apply plugin: "java"
+    group = rootProject.group
+
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+
+    ext {
+        lombokVersion = "1.18.24"
+        springBootVersion = "2.7.11"
+        jacksonVersion = '2.13.2'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compileOnly "org.slf4j:slf4j-api"
+        // Lombok:
+        compileOnly "org.projectlombok:lombok:${lombokVersion}"
+        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+        testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+        testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    }
+}
