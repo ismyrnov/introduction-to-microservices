@@ -1,9 +1,14 @@
 package com.epam.ismyrnov.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.epam.ismyrnov.dto.SongId;
 import com.epam.ismyrnov.dto.Song;
+import com.epam.ismyrnov.dto.SongIds;
 import com.epam.ismyrnov.exception.ResourceNotFoundException;
 import com.epam.ismyrnov.persistence.SongRepository;
 import com.epam.ismyrnov.persistence.entity.SongEntity;
@@ -46,5 +51,13 @@ public class SongService {
             () ->
                 new ResourceNotFoundException(
                     "The song metadata with the specified id does not exist"));
+  }
+
+  @Transactional
+  public SongIds delete(List<Long> ids) {
+    List<SongEntity> songs = songRepository.findAllById(ids);
+    List<Long> existingIds = songs.stream().map(SongEntity::getId).collect(Collectors.toList());
+    songRepository.deleteAllById(existingIds);
+    return SongIds.builder().ids(existingIds).build();
   }
 }
