@@ -10,11 +10,13 @@ repositories {
 }
 
 dependencies {
-//    // spring
     implementation "org.springframework.boot:spring-boot-starter"
     implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    // Jackson
+    implementation "org.postgresql:postgresql"
+    implementation 'org.flywaydb:flyway-core'
+
     implementation "com.fasterxml.jackson.core:jackson-databind"
     implementation "com.fasterxml.jackson.core:jackson-annotations"
     implementation "com.fasterxml.jackson.core:jackson-core"
