@@ -12,6 +12,7 @@ subprojects {
         springBootVersion = "2.7.11"
         jacksonVersion = '2.13.2'
         postgresql = '42.3.8'
+        springCloudVersion = '2021.0.7'
     }
 
     repositories {

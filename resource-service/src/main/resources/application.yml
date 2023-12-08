@@ -1,16 +1,16 @@
 server:
-  port: 8081
+  port: 8082
 
 spring:
   application:
-    name: song-service
+    name: resources-service
   flyway:
     enabled: true
     baselineOnMigrate: true
     baseline-version: 0
     locations: classpath:db/migration
+    Schemas: resources
     connect-retries: 5
-    Schemas: songs
   datasource:
     url: jdbc:postgresql://localhost:5432/introduction_to_microservices
     username: postgres
@@ -22,6 +22,16 @@ spring:
     properties:
       hibernate:
         format-sql: true
+feign:
+  hystrix:
+    enabled: false
+  client:
+    config:
+      default:
+        connectTimeout: 30000
+        readTimeout: 30000
+        loggerLevel: BASIC
+        decode404: true
 
 logging:
   level:
@@ -32,3 +42,9 @@ logging:
     org:
       springframework:
         web: DEBUG
+
+ismyrnov:
+  services:
+    songs:
+      url: http://127.0.0.1:8081
+

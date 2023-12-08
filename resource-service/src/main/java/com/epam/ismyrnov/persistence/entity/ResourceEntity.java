@@ -16,21 +16,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "t_songs", schema = "songs")
+@Table(name = "t_resources", schema = "resources")
 @SequenceGenerator(
-    name = "songs_sequence",
-    sequenceName = "q_songs_id",
+    name = "resources_sequence",
+    sequenceName = "q_resources_id",
     allocationSize = 1,
-    schema = "songs")
-public class SongEntity {
+    schema = "resources")
+public class ResourceEntity {
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "songs_sequence")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "resources_sequence")
   private Long id;
 
-  private String name;
-  private String artist;
-  private String album;
-  private String length;
-  private String resourceId;
-  private String year;
+  private byte[] data;
 }
