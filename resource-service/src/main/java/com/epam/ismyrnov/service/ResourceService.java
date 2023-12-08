@@ -1,15 +1,15 @@
 package com.epam.ismyrnov.service;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.mp3.LyricsHandler;
 import org.apache.tika.parser.mp3.Mp3Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.stereotype.Service;
@@ -18,10 +18,12 @@ import org.xml.sax.SAXException;
 
 import com.epam.ismyrnov.client.SongClient;
 import com.epam.ismyrnov.client.dto.SongId;
-import com.epam.ismyrnov.dto.File;
-import com.epam.ismyrnov.dto.FileId;
+import com.epam.ismyrnov.dto.Resource;
+import com.epam.ismyrnov.dto.ResourceId;
+import com.epam.ismyrnov.dto.ResourceIds;
 import com.epam.ismyrnov.dto.SongMetadata;
 import com.epam.ismyrnov.enums.Mp3Metadata;
+import com.epam.ismyrnov.exception.ResourceNotFoundException;
 import com.epam.ismyrnov.exception.ServiceException;
 import com.epam.ismyrnov.exception.ValidationException;
 import com.epam.ismyrnov.persistence.ResourceRepository;
@@ -39,7 +41,7 @@ public class ResourceService {
   private final SongClient songClient;
 
   @Transactional
-  public FileId upload(File request) {
+  public ResourceId upload(Resource request) {
     byte[] data = Base64.getDecoder().decode(request.getBase64Data());
     ResourceEntity resourceEntity = ResourceEntity.builder().data(data).build();
     ResourceEntity savedResourceEntity = resourceRepository.save(resourceEntity);
@@ -47,7 +49,28 @@ public class ResourceService {
     SongMetadata songMetadata = getSongMetadata(savedResourceEntity.getId(), data);
     SongId songId = songClient.create(songMetadata);
     log.debug("Created song metadata with id {}", songId.getId());
-    return FileId.builder().id(savedResourceEntity.getId()).build();
+    return ResourceId.builder().id(savedResourceEntity.getId()).build();
+  }
+
+  @Transactional
+  public ResourceIds delete(List<Long> ids) {
+    List<ResourceEntity> songs = resourceRepository.findAllById(ids);
+    List<Long> existingIds = songs.stream().map(ResourceEntity::getId).collect(Collectors.toList());
+    resourceRepository.deleteAllById(existingIds);
+    return ResourceIds.builder().ids(existingIds).build();
+  }
+
+  public Resource getResource(Integer id) {
+    return resourceRepository
+        .findById(Long.valueOf(id))
+        .map(
+            file ->
+                Resource.builder()
+                    .base64Data(new String(Base64.getEncoder().encode(file.getData())))
+                    .build())
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException("The resource with the specified id does not exist"));
   }
 
   private SongMetadata getSongMetadata(Long resourceId, byte[] data) {

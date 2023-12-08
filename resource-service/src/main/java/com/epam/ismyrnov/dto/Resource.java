@@ -9,8 +9,8 @@ import lombok.Value;
 
 @Value
 @Builder
-@JsonDeserialize(builder = File.FileBuilder.class)
-public class File {
+@JsonDeserialize(builder = Resource.FileBuilder.class)
+public class Resource {
 
   @NotBlank String base64Data;
 

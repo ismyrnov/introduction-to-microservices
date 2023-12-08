@@ -11,10 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-//  @ExceptionHandler(value = {ResourceNotFoundException.class})
-//  protected ResponseEntity<Error> handleResourceNotFoundException(ResourceNotFoundException ex) {
-//    return ResponseEntity.status(404).body(Error.builder().errorMessage(ex.getMessage()).build());
-//  }
+  @ExceptionHandler(value = {ResourceNotFoundException.class})
+  protected ResponseEntity<Error> handleResourceNotFoundException(ResourceNotFoundException ex) {
+    return ResponseEntity.status(404).body(Error.builder().errorMessage(ex.getMessage()).build());
+  }
 
   @ExceptionHandler(value = {ServiceException.class})
   protected ResponseEntity<Error> handleServiceException(ServiceException ex) {
