@@ -1,12 +1,26 @@
-plugins {
-    id 'java'
-    id 'org.springframework.boot' version '2.7.11'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.7.11'
+    }
 }
 
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 repositories {
     mavenCentral()
+}
+
+ext {
+    lombokVersion = "1.18.24"
+    springBootVersion = "2.7.11"
+    jacksonVersion = '2.13.2'
+    postgresql = '42.3.8'
+    springCloudVersion = '2021.0.7'
 }
 
 dependencies {
@@ -21,4 +35,7 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-databind"
     implementation "com.fasterxml.jackson.core:jackson-annotations"
     implementation "com.fasterxml.jackson.core:jackson-core"
+
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }

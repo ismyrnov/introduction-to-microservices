@@ -1,0 +1,81 @@
+# Use postgres/example user/password credentials
+version: '3.8'
+
+services:
+  song-service:
+    build:
+      context: ../
+      dockerfile: song-service/Dockerfile
+    hostname: song-service
+    container_name: song-service
+    image: song-service
+    restart: on-failure
+    environment:
+      POSTGRES_DB: introduction_to_microservices
+      POSTGRES_HOST: database
+    ports:
+      - "8081:8081"
+    expose:
+      - 8081
+    links:
+      - database
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - microservices_network
+
+  resource-service:
+    build:
+      context: ../
+      dockerfile: resource-service/Dockerfile
+    hostname: resource-service
+    container_name: resource-service
+    image: resource-service
+    restart: on-failure
+    environment:
+      POSTGRES_DB: introduction_to_microservices
+      POSTGRES_HOST: database
+      SONG-SERVICE_HOST: song-service
+      SONG-SERVICE_PORT: 8081
+    ports:
+      - "8082:8082"
+    expose:
+      - 8081
+    links:
+      - database
+    depends_on:
+      database:
+        condition: service_healthy
+      song-service:
+        condition: service_started
+    networks:
+      - microservices_network
+
+  database:
+    restart: on-failure
+    image: postgres:latest
+    container_name: database
+    hostname: database
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: introduction_to_microservices
+    volumes:
+      - .:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    networks:
+      - microservices_network
+    healthcheck:
+      test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
+      interval: 2s
+      timeout: 3s
+      retries: 10
+
+networks:
+  microservices_network:
+    driver: bridge
+    attachable: true

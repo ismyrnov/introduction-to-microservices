@@ -12,7 +12,7 @@ spring:
     Schemas: resources
     connect-retries: 5
   datasource:
-    url: jdbc:postgresql://localhost:5432/introduction_to_microservices
+    url: jdbc:postgresql://{POSTGRES_HOST}:5432/{POSTGRES_DB}
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -46,5 +46,5 @@ logging:
 ismyrnov:
   services:
     songs:
-      url: http://127.0.0.1:8081
+      url: http://{SONG-SERVICE_HOST}:{SONG-SERVICE_PORT}
 

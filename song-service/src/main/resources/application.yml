@@ -11,8 +11,8 @@ spring:
     locations: classpath:db/migration
     connect-retries: 5
     Schemas: songs
-  datasource:
-    url: jdbc:postgresql://localhost:5432/introduction_to_microservices
+  spring:
+    url: jdbc:postgresql://{POSTGRES_HOST}:5432/{POSTGRES_DB}
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
