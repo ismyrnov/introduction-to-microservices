@@ -12,7 +12,7 @@ spring:
     Schemas: resources
     connect-retries: 5
   datasource:
-    url: jdbc:postgresql://{POSTGRES_HOST}:5432/{POSTGRES_DB}
+    url: jdbc:postgresql://${POSTGRES_HOST}:5432/${POSTGRES_DB}
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -41,10 +41,16 @@ logging:
         ismyrnov: DEBUG
     org:
       springframework:
-        web: DEBUG
+        web: INFO
 
-ismyrnov:
-  services:
-    songs:
-      url: http://{SONG-SERVICE_HOST}:{SONG-SERVICE_PORT}
+# discovery service will handle it
+#ismyrnov:
+#  services:
+#    songs:
+#      url: http://{SONG-SERVICE_HOST}:{SONG-SERVICE_PORT}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8083/eureka
 

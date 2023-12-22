@@ -47,8 +47,6 @@ services:
     depends_on:
       database:
         condition: service_healthy
-      song-service:
-        condition: service_started
     networks:
       - microservices_network
 

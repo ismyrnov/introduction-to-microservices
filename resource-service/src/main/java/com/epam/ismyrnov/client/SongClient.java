@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.epam.ismyrnov.client.dto.SongId;
 import com.epam.ismyrnov.dto.SongMetadata;
 
-@FeignClient(name = "songs-service", url = "${ismyrnov.services.songs.url}")
+@FeignClient(name = "song-service") // , url = "${ismyrnov.services.songs.url}")
 public interface SongClient {
 
   @PostMapping(path = "/songs")

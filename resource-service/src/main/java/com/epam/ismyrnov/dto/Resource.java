@@ -1,5 +1,6 @@
 package com.epam.ismyrnov.dto;
 
+import com.epam.ismyrnov.dto.Resource.ResourceBuilder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
@@ -9,11 +10,11 @@ import lombok.Value;
 
 @Value
 @Builder
-@JsonDeserialize(builder = Resource.FileBuilder.class)
+@JsonDeserialize(builder = ResourceBuilder.class)
 public class Resource {
 
   @NotBlank String base64Data;
 
   @JsonPOJOBuilder(withPrefix = "")
-  public static class FileBuilder {}
+  public static class ResourceBuilder {}
 }

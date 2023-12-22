@@ -25,6 +25,8 @@ dependencies {
         exclude group: 'io.github.openfeign', module: 'feign-hystrix'
     }
 
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+
     implementation "org.postgresql:postgresql"
     implementation 'org.flywaydb:flyway-core'
 
