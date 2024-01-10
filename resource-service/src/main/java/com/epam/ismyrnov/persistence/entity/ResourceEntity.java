@@ -27,5 +27,5 @@ public class ResourceEntity {
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "resources_sequence")
   private Long id;
 
-  private byte[] data;
+  private String location;
 }

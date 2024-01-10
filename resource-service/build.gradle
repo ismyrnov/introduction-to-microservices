@@ -15,6 +15,10 @@ dependencyManagement {
     }
 }
 
+ext {
+    awsS3Version = "2.22.12"
+}
+
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter"
     implementation "org.springframework.boot:spring-boot-starter-web"
@@ -25,7 +29,8 @@ dependencies {
         exclude group: 'io.github.openfeign', module: 'feign-hystrix'
     }
 
-    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+//    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+    implementation "software.amazon.awssdk:s3:${awsS3Version}"
 
     implementation "org.postgresql:postgresql"
     implementation 'org.flywaydb:flyway-core'

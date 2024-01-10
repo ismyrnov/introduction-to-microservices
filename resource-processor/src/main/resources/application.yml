@@ -1,0 +1,35 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: resources-processor
+
+feign:
+  hystrix:
+    enabled: false
+  client:
+    config:
+      default:
+        connectTimeout: 30000
+        readTimeout: 30000
+        loggerLevel: BASIC
+        decode404: true
+
+logging:
+  level:
+    root: INFO
+    com:
+      epam:
+        ismyrnov: DEBUG
+    org:
+      springframework:
+        web: INFO
+
+# discovery service will handle it
+ismyrnov:
+  services:
+    songs:
+      url: http://${SONG-SERVICE_HOST}:${SONG-SERVICE_PORT}
+
+

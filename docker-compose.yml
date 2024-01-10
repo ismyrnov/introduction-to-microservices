@@ -73,6 +73,25 @@ services:
       timeout: 3s
       retries: 10
 
+  awsstack:
+    hostname: awsstack
+    image: localstack/localstack:latest
+    expose:
+      - 4566
+    ports:
+      - "4567:4566"
+    environment:
+      - SERVICES=s3:4566
+      - DEFAULT_REGION=us-east-1
+      - LOCALSTACK_HOST=localhost
+      - USE_SSL=false
+      - DATA_DIR=/localstack/data
+      - DEBUG=1
+    volumes:
+      - ./.aws/init_s3.sh:/etc/localstack/init/ready.d/init_s3.sh
+    networks:
+      - microservices_network
+
 networks:
   microservices_network:
     driver: bridge

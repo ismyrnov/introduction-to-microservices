@@ -44,13 +44,9 @@ logging:
         web: INFO
 
 # discovery service will handle it
-#ismyrnov:
-#  services:
-#    songs:
-#      url: http://{SONG-SERVICE_HOST}:{SONG-SERVICE_PORT}
+ismyrnov:
+  services:
+    songs:
+      url: http://${SONG-SERVICE_HOST}:${SONG-SERVICE_PORT}
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8083/eureka
 
