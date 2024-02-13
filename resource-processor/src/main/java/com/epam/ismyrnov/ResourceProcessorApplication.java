@@ -8,8 +8,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 // @EnableEurekaClient
 @SpringBootApplication
 @EnableFeignClients(basePackages = "com.epam.ismyrnov")
-public class ResourceApplication {
+public class ResourceProcessorApplication {
   public static void main(String[] args) {
-    SpringApplication.run(ResourceApplication.class);
+    SpringApplication.run(ResourceProcessorApplication.class);
   }
 }

@@ -29,6 +29,8 @@ logging:
 # discovery service will handle it
 ismyrnov:
   services:
+    resources:
+      url: http://${RESOURCE-SERVICE_HOST}:${RESOURCE-SERVICE_PORT}
     songs:
       url: http://${SONG-SERVICE_HOST}:${SONG-SERVICE_PORT}
 

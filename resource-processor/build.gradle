@@ -28,6 +28,11 @@ dependencies {
         exclude group: 'io.github.openfeign', module: 'feign-hystrix'
     }
 
+    implementation "org.springframework.kafka:spring-kafka"
+
+    implementation "org.springframework.retry:spring-retry:2.0.3"
+    implementation "org.springframework:spring-aspects:6.0.11"
+
 //    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
 
     implementation "org.apache.tika:tika-core:2.9.0"

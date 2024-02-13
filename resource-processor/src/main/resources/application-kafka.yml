@@ -1,0 +1,16 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      enable-auto-commit: true
+      auto:
+        commit:
+          interval:
+            ms: 1
+      auto-offset-reset: earliest
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: com.epam.ismyrnov

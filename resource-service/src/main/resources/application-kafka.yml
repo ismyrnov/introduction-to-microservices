@@ -1,0 +1,19 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      retries: 3
+      acks: all
+      properties:
+        enable:
+          idempotence: true
+        request:
+          timeout:
+            ms: 10000
+        delivery:
+          timeout:
+            ms: 15000
+        transaction:
+          timeout:
+            ms: 15000
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer

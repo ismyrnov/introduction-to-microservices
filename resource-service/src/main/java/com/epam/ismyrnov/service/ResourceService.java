@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.tika.exception.TikaException;
@@ -29,13 +30,18 @@ import com.epam.ismyrnov.exception.ServiceException;
 import com.epam.ismyrnov.exception.ValidationException;
 import com.epam.ismyrnov.persistence.ResourceRepository;
 import com.epam.ismyrnov.persistence.entity.ResourceEntity;
+import com.epam.ismyrnov.events.publisher.ResourcePublisher;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @Slf4j
 @Service
@@ -49,6 +55,8 @@ public class ResourceService {
   @Value("${aws.s3.bucket}")
   private String bucketName;
 
+  private final ResourcePublisher publisher;
+
   @Transactional
   public ResourceId upload(Resource request) {
     byte[] data = Base64.getDecoder().decode(request.getBase64Data());
@@ -59,6 +67,7 @@ public class ResourceService {
         resourceRepository.save(ResourceEntity.builder().location(fileLocation).build());
 
     uploadToStorage(data, fileLocation);
+    publisher.publish(savedResourceEntity.getId().toString());
     //    SongId songId = songClient.create(songMetadata);
     //    log.debug("Created song metadata with id {}", songId.getId());
     return ResourceId.builder().id(savedResourceEntity.getId()).build();
@@ -73,17 +82,27 @@ public class ResourceService {
   }
 
   public Resource getResource(Integer id) {
-    return resourceRepository
-        .findById(Long.valueOf(id))
-        .map(
-            file ->
-                Resource.builder()
-                    //                    .base64Data(new
-                    // String(Base64.getEncoder().encode(file.getData()))) TODO
-                    .build())
-        .orElseThrow(
-            () ->
-                new ResourceNotFoundException("The resource with the specified id does not exist"));
+    String location =
+        resourceRepository
+            .findById(Long.valueOf(id))
+            .map(ResourceEntity::getLocation)
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "The resource with the specified id does not exist"));
+    log.info("Got DB file location: '{}'", location);
+    try {
+      ResponseBytes<GetObjectResponse> s3Response =
+          s3Client.getObjectAsBytes(
+              GetObjectRequest.builder().bucket(bucketName).key(location).build());
+      log.info("Loaded S3 file");
+      return Resource.builder()
+          .fileName(location)
+          .base64Data(new String(Base64.getEncoder().encode(s3Response.asByteArray())))
+          .build();
+    } catch (S3Exception e) {
+      throw new ServiceException("S3 exception occurred during fetching file: ", e);
+    }
   }
 
   private SongMetadata getSongMetadata(

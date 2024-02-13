@@ -41,7 +41,34 @@ services:
     ports:
       - "8082:8082"
     expose:
-      - 8081
+      - 8082
+    links:
+      - database
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - microservices_network
+
+  resource-processor:
+    build:
+      context: ../
+      dockerfile: resource-processor/Dockerfile
+    hostname: resource-processor
+    container_name: resource-processor
+    image: resource-processor
+    restart: on-failure
+    environment:
+      POSTGRES_DB: introduction_to_microservices
+      POSTGRES_HOST: database
+      SONG-SERVICE_HOST: song-service
+      SONG-SERVICE_PORT: 8081
+      RESOURCE-SERVICE_HOST: localhost
+      RESOURCE-SERVICE_PORT: 8082
+    ports:
+      - "8083:8083"
+    expose:
+      - 8083
     links:
       - database
     depends_on:
@@ -73,24 +100,46 @@ services:
       timeout: 3s
       retries: 10
 
-  awsstack:
-    hostname: awsstack
-    image: localstack/localstack:latest
-    expose:
-      - 4566
-    ports:
-      - "4567:4566"
+  #  awsstack:
+  #    hostname: awsstack
+  #    image: localstack/localstack:latest
+  #    expose:
+  #      - 4566
+  #    ports:
+  #      - "4567:4566"
+  #    environment:
+  #      - SERVICES=s3:4566
+  #      - DEFAULT_REGION=us-east-1
+  #      - LOCALSTACK_HOST=localhost
+  #      - USE_SSL=false
+  #      - DATA_DIR=/localstack/data
+  #      - DEBUG=1
+  #    volumes:
+  #      - ./.aws/init_s3.sh:/etc/localstack/init/ready.d/init_s3.sh
+  #    networks:
+  #      - microservices_network
+
+  zookeeper-1:
+    image: confluentinc/cp-zookeeper:latest
     environment:
-      - SERVICES=s3:4566
-      - DEFAULT_REGION=us-east-1
-      - LOCALSTACK_HOST=localhost
-      - USE_SSL=false
-      - DATA_DIR=/localstack/data
-      - DEBUG=1
-    volumes:
-      - ./.aws/init_s3.sh:/etc/localstack/init/ready.d/init_s3.sh
-    networks:
-      - microservices_network
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+
+  kafka-1:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper-1
+    ports:
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
 networks:
   microservices_network:

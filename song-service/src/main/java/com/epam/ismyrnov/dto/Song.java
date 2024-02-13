@@ -11,6 +11,6 @@ public class Song {
   @NotBlank private final String artist;
   @NotBlank private final String album;
   @NotBlank private final String length;
-  @NotBlank private final String resourceId;
+  private final String resourceId;
   @NotBlank private final String year;
 }
